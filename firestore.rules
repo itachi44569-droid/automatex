@@ -1,0 +1,93 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---- Helper functions ----
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isTeam() {
+      return isAuthenticated() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'team'];
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    // ---- Users ----
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ---- Clients ----
+    match /clients/{clientId} {
+      allow read: if isTeam() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+      allow create, update: if isTeam();
+      allow delete: if isAdmin();
+    }
+
+    // ---- Projects ----
+    match /projects/{projectId} {
+      allow read: if isTeam() || (isAuthenticated() && resource.data.clientId == request.auth.uid);
+      allow create, update: if isTeam();
+      allow delete: if isAdmin();
+    }
+
+    // ---- Leads ----
+    match /leads/{leadId} {
+      // Public lead capture (from contact form)
+      allow create: if true;
+      allow read, update, delete: if isTeam();
+    }
+
+    // ---- Support Tickets ----
+    match /tickets/{ticketId} {
+      allow read: if isTeam() || (isAuthenticated() && resource.data.clientId == request.auth.uid);
+      allow create: if isAuthenticated();
+      allow update: if isTeam() || (isAuthenticated() && resource.data.clientId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    // ---- Meetings ----
+    match /meetings/{meetingId} {
+      allow read: if isTeam() || (isAuthenticated() && resource.data.clientEmail == request.auth.token.email);
+      allow create: if isAuthenticated();
+      allow update: if isTeam();
+      allow delete: if isAdmin();
+    }
+
+    // ---- Case Studies ----
+    match /caseStudies/{caseStudyId} {
+      allow read: if resource.data.published == true || isTeam();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // ---- Notifications ----
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isTeam();
+      allow update: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow delete: if isAdmin() || (isAuthenticated() && resource.data.userId == request.auth.uid);
+    }
+
+    // ---- Messages ----
+    match /messages/{messageId} {
+      allow read: if isAuthenticated() &&
+        (resource.data.senderId == request.auth.uid || resource.data.receiverId == request.auth.uid);
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && resource.data.receiverId == request.auth.uid;
+      allow delete: if isAdmin();
+    }
+  }
+}

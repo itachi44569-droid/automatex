@@ -1,0 +1,122 @@
+# ============================================================
+# AutomateX AI — .gitignore
+# ============================================================
+
+# ── Environment & Secrets ───────────────────────────────────
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+# Keep the example template committed
+!.env.local.example
+!.env.example
+
+# Firebase service account keys — NEVER commit these
+*service-account*.json
+*serviceAccount*.json
+firebase-adminsdk-*.json
+google-services.json
+GoogleService-Info.plist
+
+# ── Next.js ─────────────────────────────────────────────────
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# ── Node / Package managers ──────────────────────────────────
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+.npm
+.pnpm-store/
+
+# ── Firebase ────────────────────────────────────────────────
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+ui-debug.log
+database-debug.log
+pubsub-debug.log
+firestore-debug.log
+storage-debug.log
+
+# Firebase emulator data
+.emulator-data/
+/functions/node_modules/
+/functions/lib/
+
+# ── Testing & Coverage ───────────────────────────────────────
+/coverage
+/.nyc_output
+
+# ── Debug logs ───────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# ── OS generated ─────────────────────────────────────────────
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encdata
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+
+# ── IDEs & Editors ───────────────────────────────────────────
+# VS Code — keep shared settings, ignore personal
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+
+# JetBrains (WebStorm, IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim / Emacs
+*.swp
+*.swo
+*~
+\#*\#
+.#*
+
+# ── Vercel ───────────────────────────────────────────────────
+.vercel
+
+# ── Misc ─────────────────────────────────────────────────────
+*.pem
+*.key
+*.p12
+*.p8
+
+# Optional: Storybook
+/storybook-static
